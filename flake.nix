@@ -17,11 +17,6 @@
       };
     };
 
-    solana-sbf-sdk = {
-      flake = false;
-      url = "https://github.com/solana-labs/solana/releases/download/v1.18.8/sbf-sdk.tar.bz2";
-    };
-
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -31,7 +26,6 @@
     crane,
     rust-overlay,
     flake-utils,
-    solana-sbf-sdk,
     ...
   }:
     flake-utils.lib.eachDefaultSystem (system: let
@@ -49,10 +43,31 @@
       # Common arguments can be set here to avoid repeating them later
       commonArgs = {
         pname = "solana-cli";
-        version = "1.18.8";
+        version = "1.18.11";
         strictDeps = true;
         OPENSSL_NO_VENDOR = "1";
       };
+
+      solana-packages = [
+        "solana"
+        "solana-bench-tps"
+        "solana-faucet"
+        "solana-gossip"
+        "solana-install"
+        "solana-keygen"
+        "solana-ledger-tool"
+        "solana-log-analyzer"
+        "solana-net-shaper"
+        "solana-validator"
+        "solana-dos"
+        "solana-install-init"
+        "solana-stake-accounts"
+        "solana-test-validator"
+        "solana-tokens"
+        "solana-watchtower"
+        "solana-genesis"
+      ];
+      cargoBuildFlags = lib.concatStrings (builtins.map (n: "--bin=${n} ") solana-packages);
 
       solana-bins = craneLib.mkCargoDerivation (commonArgs
         // {
@@ -61,7 +76,7 @@
             owner = "solana-labs";
             repo = "solana";
             rev = "v${commonArgs.version}";
-            sha256 = "sha256-v24AZXYjuKqpgR7pO03nQpySqpVOfevwka8tU+IjZQM=";
+            sha256 = "sha256-7cFVc8IerJGChvibUMa5Uau2ClEjSOVlkXayuctCwvM=";
             fetchSubmodules = true;
           };
           doCheck = false;
@@ -72,6 +87,7 @@
             libclang.lib
             hidapi
             udev
+            rocksdb
           ];
 
           nativeBuildInputs = with pkgs; [
@@ -81,24 +97,21 @@
             rustPlatform.bindgenHook
             perl
           ];
+          ROCKSDB_LIB_DIR = "${pkgs.rocksdb}/lib";
           LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
           BINDGEN_EXTRA_CLANG_ARGS = "-isystem ${pkgs.llvmPackages.libclang.lib}/lib/clang/${lib.getVersion pkgs.clang}/include";
 
-          buildPhaseCargoCommand = "cargo build --release";
+          buildPhaseCargoCommand = "cargo build --release ${cargoBuildFlags}";
           doInstallCargoArtifacts = false;
           installPhase = ''
-            mkdir -p $out
-            ls -l target
-            find target/release -maxdepth 1 -executable -type f -exec cp {} $out/ \;
-            mkdir -p $out/sdk/sbf
-            cp -r ${solana-sbf-sdk}/* $out/sdk/sbf
+            mkdir -p $out/bin
+            find target/release -maxdepth 1 -executable -type f -exec cp -a {} $out/bin/ \;
           '';
         });
     in {
       ######################################################
       ###                 Build packages                 ###
       ######################################################
-      bin = solana-bins;
       packages = {
         default = solana-bins;
       };
