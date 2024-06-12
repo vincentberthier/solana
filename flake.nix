@@ -43,7 +43,7 @@
       # Common arguments can be set here to avoid repeating them later
       commonArgs = {
         pname = "solana-cli";
-        version = "1.18.11";
+        version = "1.18.16";
         strictDeps = true;
         OPENSSL_NO_VENDOR = "1";
       };
@@ -76,7 +76,8 @@
             owner = "solana-labs";
             repo = "solana";
             rev = "v${commonArgs.version}";
-            sha256 = "sha256-7cFVc8IerJGChvibUMa5Uau2ClEjSOVlkXayuctCwvM=";
+            sha256 = "sha256-tOIfagw367EnxqQOa0QLHqj2ODSpWHVeCrpXvujhZvw=";
+            # sha256 = lib.fakeHash;
             fetchSubmodules = true;
           };
           doCheck = false;
