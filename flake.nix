@@ -13,7 +13,6 @@
       url = "github:oxalica/rust-overlay";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
       };
     };
 
@@ -34,8 +33,7 @@
         config.allowUnfree = true;
         overlays = [(import rust-overlay)];
       };
-      rustOverlay =
-        pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
+      rustOverlay = pkgs.rust-bin.stable.latest.default;
 
       inherit (pkgs) lib;
       craneLib = (crane.mkLib pkgs).overrideToolchain rustOverlay;
@@ -43,28 +41,28 @@
       # Common arguments can be set here to avoid repeating them later
       commonArgs = {
         pname = "solana-cli";
-        version = "1.18.16";
+        version = "1.18.20";
         strictDeps = true;
         OPENSSL_NO_VENDOR = "1";
       };
 
       solana-packages = [
+        "agave-install"
+        "agave-ledger-tool"
+        "agave-validator"
+        "agave-install-init"
+        "agave-watchtower"
         "solana"
         "solana-bench-tps"
         "solana-faucet"
         "solana-gossip"
-        "solana-install"
         "solana-keygen"
-        "solana-ledger-tool"
         "solana-log-analyzer"
         "solana-net-shaper"
-        "solana-validator"
         "solana-dos"
-        "solana-install-init"
         "solana-stake-accounts"
         "solana-test-validator"
         "solana-tokens"
-        "solana-watchtower"
         "solana-genesis"
       ];
       cargoBuildFlags = lib.concatStrings (builtins.map (n: "--bin=${n} ") solana-packages);
@@ -73,10 +71,10 @@
         // {
           cargoArtifacts = null;
           src = pkgs.fetchFromGitHub {
-            owner = "solana-labs";
-            repo = "solana";
+            owner = "anza-xyz";
+            repo = "agave";
             rev = "v${commonArgs.version}";
-            sha256 = "sha256-tOIfagw367EnxqQOa0QLHqj2ODSpWHVeCrpXvujhZvw=";
+            sha256 = "sha256-tW24CGGmoUe9VP99ViQb7JMSTrPHOjrkppurA4q2hLs=";
             # sha256 = lib.fakeHash;
             fetchSubmodules = true;
           };
