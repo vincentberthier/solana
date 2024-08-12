@@ -1,5 +1,5 @@
 {
-  description = "Solona binaries and tools";
+  description = "Solana binaries and tools";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -28,6 +28,7 @@
     ...
   }:
     flake-utils.lib.eachDefaultSystem (system: let
+      solana-version = "1.18.22";
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
@@ -41,7 +42,7 @@
       # Common arguments can be set here to avoid repeating them later
       commonArgs = {
         pname = "solana-cli";
-        version = "1.18.20";
+        version = solana-version;
         strictDeps = true;
         OPENSSL_NO_VENDOR = "1";
       };
@@ -74,7 +75,7 @@
             owner = "anza-xyz";
             repo = "agave";
             rev = "v${commonArgs.version}";
-            sha256 = "sha256-tW24CGGmoUe9VP99ViQb7JMSTrPHOjrkppurA4q2hLs=";
+            sha256 = "sha256-rT3eR0A7D9l/qr+v55X4JMouayS/w8SaaxyhY8xOCAA=";
             # sha256 = lib.fakeHash;
             fetchSubmodules = true;
           };
@@ -103,7 +104,7 @@
           buildPhaseCargoCommand = "cargo build --release ${cargoBuildFlags}";
           doInstallCargoArtifacts = false;
           installPhase = ''
-            mkdir -p $out/bin
+            mkdir -p $out/bin/sdk/sbf
             find target/release -maxdepth 1 -executable -type f -exec cp -a {} $out/bin/ \;
           '';
         });
