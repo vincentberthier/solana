@@ -6,7 +6,6 @@
 
     crane = {
       url = "github:ipetkov/crane";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     rust-overlay = {
@@ -28,7 +27,6 @@
     ...
   }:
     flake-utils.lib.eachDefaultSystem (system: let
-      solana-version = "1.18.22";
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
@@ -42,7 +40,7 @@
       # Common arguments can be set here to avoid repeating them later
       commonArgs = {
         pname = "solana-cli";
-        version = solana-version;
+        version = "1.18.23";
         strictDeps = true;
         OPENSSL_NO_VENDOR = "1";
       };
