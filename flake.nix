@@ -40,7 +40,7 @@
       # Common arguments can be set here to avoid repeating them later
       commonArgs = {
         pname = "solana-cli";
-        version = "1.18.23";
+        version = "2.0.9";
         strictDeps = true;
         OPENSSL_NO_VENDOR = "1";
       };
@@ -73,7 +73,7 @@
             owner = "anza-xyz";
             repo = "agave";
             rev = "v${commonArgs.version}";
-            sha256 = "sha256-rT3eR0A7D9l/qr+v55X4JMouayS/w8SaaxyhY8xOCAA=";
+            sha256 = "sha256-SrfhLchtWfU2DN5EypvbvI4a1/fB5RMKpRH6vKJ8sA0=";
             # sha256 = lib.fakeHash;
             fetchSubmodules = true;
           };
